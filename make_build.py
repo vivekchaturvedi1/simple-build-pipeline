@@ -2,6 +2,10 @@
 from os import environ
 from subprocess import check_output
 from uuid import uuid4
+from fabric.api import cd, run, settings, env
+
+env.host_string='vivek@10.10.10.60:22'
+env.password='vivek!'
 
 def main():
   repoPath='https://github.com/vivekchaturvedi1/cmake-hello-world.git'
@@ -19,12 +23,11 @@ def main():
 
 
 def runShell(cmdArg, cwdArg):
-  try:
-    output=check_output(cmdArg.split(" "), cwd=cwdArg)
-    if cmdArg=='make':
-      print output
-  except subprocess.CalledProcessError as excep:
-    print excep
+
+  with settings(warn_only=True):
+    with cd(cwdArg):
+      if run(cmdArg).failed:
+        run("echo %s Failed!" %cmdArg)
 
 if __name__ == "__main__":
   main()
